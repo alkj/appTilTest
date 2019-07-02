@@ -24,7 +24,9 @@ import android.view.Menu;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, GalleryFragment.OnGalleryFragmentInteractionListener, HomeFragment.OnHomeFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, GalleryFragment.OnGalleryFragmentInteractionListener,
+        HomeFragment.OnHomeFragmentInteractionListener, FindPlaceFragment.OnFragmentInteractionListener, CreateAdFragment.OnFragmentInteractionListener {
+
     private int STORAGE_PERMISSION_CODE = 1;
 
     @Override
@@ -152,5 +154,10 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+
     }
 }
