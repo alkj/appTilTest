@@ -1,5 +1,6 @@
 package com.example.myapplicationtest;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -7,11 +8,13 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 /**
@@ -101,7 +104,11 @@ public class FindPlaceFragment extends Fragment implements View.OnClickListener 
                     convertView = getLayoutInflater().inflate(R.layout.grid_tile, parent, false);
                 }
 
-                convertView.findViewById(R.id.grid_tile);
+                TextView tdesction = convertView.findViewById(R.id.grid_tile_textView_desciption);
+                TextView tsquare = convertView.findViewById(R.id.grid_tile_textView_squareM);
+
+                tdesction.setText("super hyggeligt sted. \nting rådner som regel ikke her");
+                tsquare.setText("størrelse : "+position+" m³");
 
                 return convertView;
             }
@@ -137,21 +144,29 @@ public class FindPlaceFragment extends Fragment implements View.OnClickListener 
 
     @Override
     public void onClick(View v) {
-
+        if (v.equals(this.buttonSearch)){
+            int pos;
+            try {
+                pos = Integer.parseInt(editTextSearch.getText().toString());
+                listViewSearchResults.smoothScrollToPosition(pos);
+                hideKeyboardFrom(getContext(), this.getView());
+            } catch (Exception e){
+                Toast.makeText(getContext(), "skriv et tal", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+
+
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    public static void hideKeyboardFrom(Context context, View view) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+
 }
