@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 /**
@@ -53,7 +54,6 @@ public class GalleryFragment extends Fragment {
     private OnGalleryFragmentInteractionListener mListener;
 
     public GalleryFragment() {
-        // Required empty public constructor
     }
 
     /**
@@ -75,25 +75,13 @@ public class GalleryFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_gallery, container, false);
-
+    public void onResume() {
+        super.onResume();
         files = imageReader(Environment.getExternalStorageDirectory());
-
-        gridView = v.findViewById(R.id.grid_layout);
         gridView.setAdapter(new BaseAdapter() {
             @Override
             public int getCount() {
+                Log.i(TAG, "getCount: "+files.size());
                 return files.size();
             }
 
@@ -113,33 +101,55 @@ public class GalleryFragment extends Fragment {
                 Bitmap bitmap = BitmapFactory.decodeFile(files.get(position).getPath());
 
                 if (convertView == null){
-                    convertView = LayoutInflater.from(getContext()).inflate(R.layout.grid_tile, parent, false);
+                    convertView = LayoutInflater.from(getContext()).inflate(R.layout.grid_tile1, parent, false);
                 }
                 File item = getItem(position);
-                ImageView imageView = convertView.findViewById(R.id.grid_tile);
+                ImageView imageView = convertView.findViewById(R.id.grid_tile1);
                 imageView.setImageBitmap(bitmap);
+
+                Log.i(TAG, "getView: image position "+position);
 
                 return convertView;
             }
         });
 
+    }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_gallery, container, false);
+
+
+        gridView = v.findViewById(R.id.grid_layout);
 
         return v;
     }
 
     private ArrayList<File> imageReader(File externalStorageDirectory) {
         File[] fileArray = externalStorageDirectory.listFiles();
+        ArrayList<File> arrayList = new ArrayList<>();
+
         for (int i = 0; i < fileArray.length; i++) {
-            if (fileArray[i].isDirectory()) {
-                files.addAll(imageReader(fileArray[i]));
+            if (fileArray[i].isDirectory()){
+                arrayList.addAll(imageReader(fileArray[i]));
             } else {
-                if (fileArray[i].getName().endsWith(".jpg")||fileArray[i].getName().endsWith(".jpeg")) {
-                    files.add(fileArray[i]);
+                if (fileArray[i].getName().endsWith(".jpg")){
+                    arrayList.add(fileArray[i]);
                 }
             }
         }
-        return files;
+
+        return arrayList;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
